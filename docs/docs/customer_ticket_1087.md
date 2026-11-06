@@ -1,42 +1,42 @@
 # Customer Support Ticket – TKT-1087
 
 ## Customer Profile
-- Customer: Sarah
-- Customer ID: sarah_eng_01
-- Role: Lead Engineer
-- Date: November 5, 2026
-- Environment: Node.js backend hosted on AWS
+- **Customer:** Sarah
+- **Customer ID:** `sarah_eng_01`
+- **Role:** Lead Engineer
+- **Date:** November 5, 2026
+- **Environment:** Node.js backend hosted on AWS
 
-## Issue
-Sarah reports that her webhook endpoint is still timing out when the platform sends event deliveries.
+## Issue Description
+Sarah reports that her webhook endpoint continues to time out when the platform attempts to deliver events.
 
-Her API authentication and outbound API calls are now working after resolving previous issues.
+Her API authentication and outbound API connectivity are now functioning correctly following the resolution of two previous support issues.
 
 ## Previous Troubleshooting
-- Reset API keys.
-- Cleared restrictive firewall rules.
+The following steps have already been completed:
+- Reset and regenerated API keys.
+- Removed restrictive outbound firewall rules.
 - Verified API credentials.
 - Confirmed outbound API connectivity.
 
 ## Current Investigation
-The credentials and firewall rules have been verified as correct.
+API credentials and outbound firewall configurations have been verified as correct.
 
-The remaining issue requires investigation of:
-1. Whether the webhook endpoint responds with HTTP 200 quickly.
-2. Inbound AWS security group rules.
-3. Load balancer timeout configurations.
-4. Node.js application logs.
+The investigation is now focused on:
+1. Confirming whether the webhook endpoint responds with HTTP 200 within the required response time.
+2. Reviewing inbound AWS security group rules.
+3. Checking load balancer timeout configurations.
+4. Examining Node.js application logs for errors or delayed responses.
 
-## Status
-OPEN – Under Investigation
+## Ticket Status
+**OPEN – Under Investigation**
 
 ## Key Information to Remember
-Sarah previously experienced:
-- API authentication failures caused by revoked API keys (TKT-1001).
-- Outbound API timeouts caused by restrictive AWS security group rules (TKT-1042).
+Sarah has previously experienced two separate issues:
 
-Both issues were resolved.
+- **TKT-1001 – API Authentication Failure:** Caused by revoked API keys. Resolved by generating new keys and updating AWS environment variables.
+- **TKT-1042 – Outbound API Timeout:** Caused by restrictive AWS security group rules. Resolved by allowing the required outbound IP ranges.
 
-Her current webhook timeout (TKT-1087) is a separate unresolved issue.
+Both previous issues are resolved.
 
-The agent should recall this history and avoid repeating troubleshooting steps that have already been completed.
+**TKT-1087 is a separate, currently unresolved webhook timeout issue.** The support agent should recall Sarah's history, avoid repeating completed troubleshooting steps, and continue investigating the remaining webhook, inbound connectivity, load balancer, and application-log possibilities.
