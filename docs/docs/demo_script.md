@@ -2,54 +2,99 @@
 
 ## 1. Introduction
 
-Hello everyone! Today, we are presenting our Customer Support Agent, an AI-powered assistant that uses persistent memory to provide continuous and personalised customer support.
+Hello everyone!
 
-Unlike traditional chatbots, our agent remembers previous customer interactions, even when a customer starts a completely new session.
+Today, we are presenting our Customer Support Agent, an AI-powered support assistant designed to deliver continuous and personalised customer support using persistent memory.
+
+Unlike traditional chatbots that primarily focus on the current conversation, our agent can retain relevant customer information and recall previous interactions, even when a customer starts a completely new chat session.
 
 ## 2. The Problem
 
-Traditional customer support systems often make customers repeat their problems whenever they start a new conversation.
+One of the biggest challenges in customer support is the lack of continuity between conversations.
 
-Customers may need to explain their technical environment, previous tickets, and troubleshooting steps all over again.
+Customers often have to explain their technical environment, repeat previously reported issues, and describe troubleshooting steps they have already completed.
 
-This creates frustration and wastes valuable time.
+This results in repetitive communication, wasted time, and a frustrating support experience.
 
-## 3. Session 1 – Sarah's Support History
+Our project addresses this problem through persistent AI memory.
 
-Let's meet Sarah, a lead engineer using a Node.js backend hosted on AWS.
+## 3. Meet the Customer – Sarah
 
-Sarah has previously raised multiple support tickets:
+For our demonstration, let's consider Sarah, a Lead Engineer working with a Node.js backend hosted on AWS infrastructure.
 
-- TKT-1001: API authentication failures caused by revoked API keys.
-- TKT-1042: Outbound API timeouts caused by restrictive AWS security group rules.
-- TKT-1087: A new webhook timeout issue that is still under investigation.
+Sarah has previously contacted technical support for three issues:
 
-The agent can use persistent memory to retain relevant information about Sarah's environment and support history.
+- **TKT-1001 – API Authentication Failure:** Revoked API keys caused authentication errors. The issue was resolved by generating new API keys and updating AWS environment variables.
+- **TKT-1042 – Outbound API Timeout:** Restrictive AWS security group rules affected outbound connectivity. The issue was resolved by correcting the required network rules.
+- **TKT-1087 – Webhook Timeout:** Sarah reported a continuing webhook timeout issue, which is still under investigation.
 
-## 4. Session 2 – Sarah Returns
+This information forms Sarah's customer support history.
 
-Now imagine Sarah returns one week later and starts a completely new chat.
+## 4. Session 1 – Initial Interaction
 
-She says:
+Sarah starts a conversation with the AI support agent.
 
-"Hi, I'm still facing an issue with my webhook endpoint."
+**Sarah:** Hi, my payment webhook keeps timing out. We're receiving 504 errors.
 
-Instead of asking Sarah to explain everything again, the agent retrieves relevant information from her previous support history.
+**AI Agent:** I'm sorry you're experiencing this. Could you tell me about your technical environment?
 
-## 5. Memory-Powered Support
+**Sarah:** Our backend is built using Node.js and hosted on AWS.
 
-The agent recalls:
-- Sarah's Node.js and AWS environment.
-- Her previous authentication issue.
-- The outbound connectivity issue and its resolution.
-- The troubleshooting steps already attempted.
+**AI Agent:** Have you already tried any troubleshooting steps?
 
-It can now focus on investigating the remaining webhook timeout rather than repeating old solutions.
+**Sarah:** Yes, we've checked our AWS firewall rules and rotated our production API keys, but the issue is still happening.
 
-## 6. Conclusion
+**AI Agent:** Understood. I'll keep your environment and troubleshooting history in mind. Could you share the latest request ID and relevant server logs so we can investigate further?
 
-Our Customer Support Agent demonstrates how persistent memory can transform traditional chatbots into context-aware support assistants.
+During this interaction, the system uses Hindsight to retain relevant customer information and support context.
 
-By remembering customer history across separate sessions, it aims to reduce repetitive explanations and improve the overall support experience.
+## 5. Session 2 – The Memory Demonstration
+
+Now imagine Sarah returns one week later and starts a completely new chat session.
+
+**Sarah:** Hi, my webhook is still timing out. Can you help me?
+
+**AI Agent:** Welcome back, Sarah! I remember that you're using a Node.js backend hosted on AWS. You previously investigated authentication failures and outbound connectivity issues. Your earlier firewall checks and API key rotation have already been attempted.
+
+Let's continue investigating the webhook timeout without repeating those troubleshooting steps.
+
+**Sarah:** Yes! That's exactly what we discussed last time.
+
+**AI Agent:** Great! Let's focus on the remaining issue. Could you share your latest request ID and Node.js server logs so we can identify whether the delay is occurring within your application or during network communication?
+
+This demonstrates how the agent can retrieve relevant historical context instead of treating Sarah as a completely new customer.
+
+## 6. How Hindsight Powers the System
+
+Our architecture combines four major components:
+
+1. **Frontend:** Provides an interactive customer support chat interface using HTML, CSS and JavaScript.
+2. **FastAPI:** Handles communication between the frontend, AI model and memory system.
+3. **Groq:** Processes customer queries and generates contextual responses.
+4. **Hindsight:** Retains and retrieves relevant customer information across separate interactions.
+
+The workflow follows five stages:
+
+- Recall previous customer memories.
+- Understand the current customer query.
+- Generate a contextual response using Groq.
+- Retain relevant new interaction information.
+- Return the response to the frontend.
+
+## 7. Key Benefits
+
+- Persistent customer context across separate sessions.
+- Reduced repetition of previously attempted troubleshooting.
+- More personalised support interactions.
+- Better continuity in ongoing technical investigations.
+- Improved customer support efficiency.
+
+## 8. Conclusion
+
+Our Customer Support Agent demonstrates how persistent memory can transform a conventional chatbot into a context-aware support assistant.
+
+By combining AI-powered responses with long-term customer memory, our system aims to make support interactions more continuous, efficient and personalised.
+
+Instead of making customers start from zero every time, our agent remembers where the conversation left off.
 
 Thank you!
