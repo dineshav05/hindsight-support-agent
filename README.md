@@ -13,6 +13,7 @@ An intelligent, context-aware customer support agent built for the hackathon. Un
 - [The Problem](#the-problem)
 - [The Solution and Hindsight Integration](#the-solution-and-hindsight-integration)
 - [Architecture and the Recall-Think-Generate-Remember Workflow](#architecture-and-the-recall-think-generate-remember-workflow)
+- [How We Used Hindsight](#how-we-used-hindsight)
 - [Demo Scenario](#demo-scenario)
 - [Tech Stack](#tech-stack)
 - [Local Installation and Running Instructions](#local-installation-and-running-instructions)
@@ -99,6 +100,24 @@ flowchart LR
     LOOP <-->|prompt and response| LLM
     API -->|reply and memories| UI
 ```
+
+---
+
+## How We Used Hindsight
+
+Hindsight is the memory layer of this project. The backend uses it in two places on every message: before the LLM call, to **recall** what we already know about the customer, and after the LLM call, to **remember** what just happened.
+
+- **Per-customer memory:** Each customer is identified by a unique ID (for example, `sarah_eng_01`). Recall and remember calls are tied to that ID, so one customer's history never leaks into another's.
+- **What gets stored:** Technical environment details (such as Node.js on AWS), past tickets, the fixes that were tried, and new insights from each conversation.
+- **What gets recalled:** The memories most relevant to the customer's new message, which the backend places into the system prompt before calling Groq.
+- **Visible to the user:** The retrieved memories are also returned to the frontend and shown in the "Hindsight Memory Core" sidebar, so it is clear what the agent remembered.
+- **Seeded history:** `backend/seed_hindsight.py` loads Sarah's three mock tickets into Hindsight, so the demo shows memory working from the first message.
+
+### Raw REST API instead of the Python SDK
+
+We integrated Hindsight through its **raw REST API** (called with Python's `requests` library) instead of the official Python SDK. Our environment runs Python 3.9, and the SDK's version requirements did not allow us to use it there. Rather than upgrading the runtime or dropping Hindsight, we called the HTTP endpoints directly from the FastAPI backend.
+
+This kept the integration working on our existing setup, with no dependency on a specific SDK version. It also means every Hindsight call in `main.py` is a plain HTTP request that is easy to read, test, and debug.
 
 ---
 
