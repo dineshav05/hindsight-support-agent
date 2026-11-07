@@ -1,121 +1,188 @@
-# Customer Support Agent
+# Context-Aware Customer Support Agent (Hindsight MVP)
 
-### AI-Powered Customer Support with Persistent Memory
+An intelligent, context-aware customer support agent built for the hackathon. Unlike traditional stateless chatbots that forget past interactions upon page refresh, this application leverages **Vectorize's Hindsight memory system** and **Groq** to persistently recall user history, adapt its troubleshooting guidance over time, and eliminate redundant questioning.
 
-## Overview
+**Project title:** Context-Aware SaaS Support Agent
 
-Customer Support Agent is an AI-powered customer support assistant that remembers previous customer interactions using persistent memory.
-
-Unlike traditional chatbots that start every conversation from scratch, our agent remembers customer details, previous support tickets, technical environments, issues, and solutions already attempted.
-
-This allows customers to continue conversations without repeatedly explaining their problems.
-
-## Problem Statement
-
-Traditional customer support systems often treat every new conversation as a separate interaction.
-
-When customers return with an unresolved issue, they may have to explain their problem again, share their technical environment, and repeat troubleshooting steps.
-
-This creates frustration for customers and increases the workload of support teams.
-
-## Our Solution
-
-Our Customer Support Agent uses AI and Hindsight persistent memory to:
-
-- Remember previous customer conversations.
-- Retrieve historical support tickets.
-- Recall customer-specific technical environments.
-- Track troubleshooting steps already attempted.
-- Provide context-aware support recommendations.
-- Maintain continuity across separate chat sessions.
-
-## How It Works
-
-1. A customer starts a support conversation.
-2. The agent collects the customer's issue and technical details.
-3. Relevant conversation and ticket information is stored in persistent memory.
-4. The customer starts a new conversation later.
-5. The agent retrieves relevant historical information.
-6. The agent continues helping without asking the customer to repeat everything.
-
-## Demo Scenario – Sarah's Support Journey
-
-### Session 1: Initial Support Conversation
-
-Sarah contacts support with a complex software configuration issue.
-
-The agent records:
-- Customer information.
-- Operating system and software version.
-- Description of the configuration issue.
-- Troubleshooting steps attempted.
-- Solutions suggested and their outcomes.
-
-The information is retained in persistent memory.
-
-### Session 2: Returning Customer
-
-One week later, Sarah starts a completely new conversation.
-
-She says:
-
-"Hi, I'm still facing the same configuration issue."
-
-The agent retrieves her previous support history and recalls her environment, previous ticket, and troubleshooting attempts.
-
-It can then continue the investigation without making Sarah repeat everything.
-
-## Hindsight – Persistent Memory
-
-Hindsight provides the persistent memory layer for the project.
-
-It is intended to allow the agent to retain and retrieve useful information from previous customer interactions.
-
-In our system, it supports:
-- Customer history retrieval.
-- Previous ticket recall.
-- Technical environment awareness.
-- Troubleshooting continuity.
-- Context-aware responses across sessions.
-
-## Technology Stack
-
-| Component | Technology |
-|---|---|
-| Backend | Python, FastAPI |
-| Frontend | HTML, CSS, JavaScript |
-| Persistent Memory | Hindsight |
-| Data Format | JSON |
-
-## Key Features
-
-- AI-powered customer support.
-- Persistent customer memory.
-- Historical ticket retrieval.
-- Customer-specific context.
-- Cross-session conversation continuity.
-- Reduced repetitive troubleshooting.
-
-## Expected Impact
-
-- Customers do not need to repeat their issues.
-- Support agents can access historical context.
-- Repeated troubleshooting can be reduced.
-- Customer support becomes more continuous and personalised.
-
-## Future Scope
-
-- Integration with real customer support platforms.
-- Automated ticket classification.
-- Customer support analytics.
-- Multi-customer memory management.
-- Integration with email and live chat platforms.
-
-## Project Objective
-
-To demonstrate how persistent memory can transform traditional AI chatbots into customer-aware support assistants that remember, understand, and continue helping customers across multiple conversations.
+**Short summary:** An AI-powered customer support agent built with Vectorize Hindsight and Groq that persistently remembers user technical environments, past ticket history, and previous troubleshooting steps to eliminate redundant questioning and deliver instant, personalized resolutions.
 
 ---
 
-**Project:** Customer Support Agent  
-**Focus:** AI, Customer Support, and Persistent Memory
+## Table of Contents
+
+- [The Problem](#the-problem)
+- [The Solution and Hindsight Integration](#the-solution-and-hindsight-integration)
+- [Architecture and the Recall-Think-Generate-Remember Workflow](#architecture-and-the-recall-think-generate-remember-workflow)
+- [Demo Scenario](#demo-scenario)
+- [Tech Stack](#tech-stack)
+- [Local Installation and Running Instructions](#local-installation-and-running-instructions)
+- [Project Structure](#project-structure)
+- [Highlights and Real-World Impact](#highlights-and-real-world-impact)
+- [Submission Deliverables Checklist](#submission-deliverables-checklist)
+
+---
+
+## The Problem
+
+Traditional customer support chatbots are entirely stateless. They forget everything the moment a user refreshes the page or opens a new session. Enterprise users (like Lead Engineers) are forced to repeatedly explain their tech stacks (for example, Node.js on AWS), share the same error logs, and restate previously attempted firewall fixes across multiple tickets, creating immense friction and delayed resolutions.
+
+---
+
+## The Solution and Hindsight Integration
+
+Our project solves this by integrating Vectorize's Hindsight memory system into an intelligent support workflow. Instead of relying on manual data retrieval or reactive searching, our application executes an automated Recall-Think-Generate-Remember loop on every interaction:
+
+- **Recall:** Instantly queries the Hindsight API using the user's unique ID to retrieve deep historical context, past observations, and environmental preferences.
+- **Think and Generate:** Dynamically bundles these memories with a Groq-powered LLM (`qwen/qwen3.8-27b`) to generate an advanced, hyper-personalized troubleshooting response.
+- **Remember:** Continuously writes new interaction insights back to the Hindsight database, allowing the agent to learn and evolve dynamically over time.
+
+---
+
+## Architecture and the Recall-Think-Generate-Remember Workflow
+
+Our FastAPI backend implements an explicit cognitive loop on every incoming customer message to ensure seamless personalization:
+
+```
+[User Message]
+      │
+      ▼
+ RECALL ────> Queries Hindsight REST API for user-specific context (e.g., tech stack, past tickets)
+      │
+      ▼
+ THINK ─────> Dynamically constructs system prompts combining historical context with current queries
+      │
+      ▼
+ GENERATE ──> Processes the prompt through Groq's high-speed LLM (qwen/qwen3.8-27b)
+      │
+      ▼
+ REMEMBER ──> Writes the new interaction back to Hindsight to continuously update user memory
+      │
+      ▼
+[Frontend UI] ──> Displays response and highlights retrieved memories in the live "Hindsight Memory Core" sidebar
+```
+
+The same flow as a diagram:
+
+```mermaid
+flowchart TD
+    A[User message] --> B[Recall<br/>Query Hindsight REST API for user context]
+    B --> C[Think<br/>Build a system prompt from history plus the current query]
+    C --> D[Generate<br/>Process the prompt through Groq LLM]
+    D --> E[Remember<br/>Write the new interaction back to Hindsight]
+    E --> F[Frontend UI<br/>Show the response and highlight retrieved memories<br/>in the Hindsight Memory Core sidebar]
+```
+
+1. **Recall:** When a user (for example, `sarah_eng_01`) sends a message, the backend pings the Hindsight API to retrieve relevant historical observations and experiences.
+2. **Think:** The backend bundles the retrieved memories (such as past AWS configurations, firewall rules, and previous timeout logs) into a structured system prompt.
+3. **Generate:** The context-enriched prompt is sent to the Groq API, producing a highly targeted, accurate tech-support response without asking redundant questions.
+4. **Remember:** The latest interaction is automatically saved back to Hindsight, allowing the agent to learn and evolve across sessions.
+
+### System architecture
+
+```mermaid
+flowchart LR
+    subgraph Frontend
+        UI[Chat UI and<br/>Hindsight Memory Core sidebar]
+    end
+
+    subgraph Backend["Backend (FastAPI)"]
+        API[API endpoint]
+        LOOP[Recall, Think,<br/>Generate, Remember]
+    end
+
+    HS[(Hindsight<br/>Memory)]
+    LLM[Groq LLM]
+
+    UI -->|message| API
+    API --> LOOP
+    LOOP <-->|recall and retain| HS
+    LOOP <-->|prompt and response| LLM
+    API -->|reply and memories| UI
+```
+
+---
+
+## Demo Scenario
+
+The demo uses a seeded customer, **Sarah** (`sarah_eng_01`), a Lead Engineer who uses a Node.js backend hosted on AWS.
+
+| Ticket | Date | Summary | Status |
+|---|---|---|---|
+| TKT-1001 | 2026-10-08 | 401 Unauthorized errors because API keys were revoked during a security rotation. New API keys generated, AWS environment variables updated, Node.js service restarted. | Resolved |
+| TKT-1042 | 2026-10-22 | Intermittent connection timeouts caused by restrictive AWS security group and firewall rules. Required platform IP ranges added to the allowlist and conflicting deny rules removed. | Resolved |
+| TKT-1087 | 2026-11-05 | API keys reset and firewall rules cleared. Authentication and outbound API calls work, but the webhook endpoint is still timing out. | Open |
+
+For TKT-1087, the recommended next checks are webhook handler response time, inbound security group rules, load balancer timeout settings, and Node.js server logs.
+
+---
+
+## Tech Stack
+
+- **Backend:** Python, FastAPI, Uvicorn, Requests
+- **AI Model:** Groq API (`qwen/qwen3.8-27b`) for ultra-fast, high-speed inference
+- **Memory Core:** Vectorize Hindsight REST API (Cloud)
+- **Frontend:** Custom-styled HTML5, CSS3, and JavaScript (v2). A modern, responsive SaaS chat interface featuring a real-time animated "Hindsight Memory Core" sidebar that gives complete visual transparency into real-time context retrieval.
+
+---
+
+## Local Installation and Running Instructions
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/dineshav05/hindsight-support-agent.git
+cd hindsight-support-agent
+```
+
+### 2. Install Backend Dependencies
+
+Navigate to the backend folder and install the required packages:
+
+```bash
+cd backend
+pip install fastapi uvicorn pydantic requests groq
+```
+
+### 3. Run the FastAPI Backend Server
+
+Start the backend using Python's module runner:
+
+```bash
+python3 -m uvicorn main:app --reload --host 127.0.0.1 --port 8000
+```
+
+### 4. Launch the Frontend UI
+
+Open a separate terminal window, navigate to the frontend directory, and spin up a local web server:
+
+```bash
+cd frontend
+python3 -m http.server 3000
+```
+
+Open your browser and navigate to [http://127.0.0.1:3000](http://127.0.0.1:3000) to interact with the live context-aware support agent.
+
+---
+
+## Project Structure
+
+```
+hindsight-support-agent/
+├── backend/
+│   ├── main.py              # FastAPI server implementing the memory loop
+│   └── seed_hindsight.py    # Script used to inject mock user history
+├── frontend/
+│   └── index.html           # Polished SaaS chat interface & memory sidebar
+└── README.md                # Project documentation
+```
+
+---
+
+## Highlights and Real-World Impact
+
+- **Eliminates Redundancy:** Enterprise clients no longer need to repeat their environment specs (for example, Node.js on AWS) across support sessions.
+- **Visualized Memory Core:** The UI features a dedicated, animated sidebar displaying live memory retrieval metrics, giving judges complete transparency into the agent's cognitive state.
+- **Real-World Business Impact:** By bridging the gap between stateless AI and persistent user memory, this agent reduces Average Handle Time (AHT), removes customer fatigue from repeating details, and provides a blueprint for next-generation B2B customer support SaaS.
+
+---
+
