@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Context-Aware SaaS Support | AI Agent</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+        :root {
+            --bg-color: #f4f4f5;
+            --panel-bg: #ffffff;
+            --primary-blue: #2563eb;
+            --primary-hover: #1d4ed8;
+            --agent-msg-bg: #f3f4f6;
+            --user-msg-bg: #eff6ff;
+            --text-main: #111827;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --memory-accent: #8b5cf6;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            margin: 0;
+            height: 100vh;
+            background: var(--bg-color);
+            color: var(--text-main);
+        }
+
+        /* Chat Layout */
+        #chat-container {
+            width: 65%;
+            display: flex;
+            flex-direction: column;
+            background: var(--panel-bg);
+            box-shadow: 1px 0 15px rgba(0,0,0,0.05);
+            z-index: 10;
+        }
+
+        .header {
+            padding: 24px 30px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header h2 { margin: 0; font-size: 1.25rem; font-weight: 600; }
+        .ticket-badge { background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: 600; }
+
+        #chat-history {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Message Bubbles */
+        .message { max-width: 80%; padding: 16px 20px; border-radius: 12px; line-height: 1.5; font-size: 0.95rem; animation: fadeIn 0.3s ease-in-out; }
+        .agent-msg { background: var(--agent-msg-bg); align-self: flex-start; border-bottom-left-radius: 4px; }
+        .user-msg { background: var(--user-msg-bg); align-self: flex-end; border-bottom-right-radius: 4px; border: 1px solid #bfdbfe; }
+        .msg-label { font-size: 0.8rem; font-weight: 600; margin-bottom: 6px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* Input Area */
+        .input-area {
+            padding: 24px 30px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 12px;
+            background: #fafafa;
+        }
+
+        input[type="text"] {
+            flex-grow: 1;
+            padding: 14px 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus { border-color: var(--primary-blue); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+
+        button {
+            padding: 0 24px;
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover { background: var(--primary-hover); }
+
+        /* Memory Sidebar */
+        #sidebar {
+            width: 35%;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .sidebar-header h3 { margin: 0; font-size: 1.1rem; font-weight: 600; color: var(--memory-accent); }
+        .pulse-dot { width: 10px; height: 10px; background: var(--memory-accent); border-radius: 50%; box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.7); animation: pulse 2s infinite; }
+
+        .memory-item {
+            background: var(--panel-bg);
+            padding: 16px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            border-left: 4px solid var(--memory-accent);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .status-text { color: var(--text-muted); font-size: 0.9rem; font-style: italic; }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(139, 92, 246, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(139, 92, 246, 0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="chat-container">
+        <div class="header">
+            <h2>Support Ticket</h2>
+            <span class="ticket-badge">User: sarah_eng_01</span>
+        </div>
+
+        <div id="chat-history">
+            <div class="message agent-msg">
+                <div class="msg-label">AI Agent</div>
+                Hello Sarah, how can I help you today?
+            </div>
+        </div>
+
+        <div class="input-area">
+            <input type="text" id="userInput" value="My webhook is still timing out." onkeypress="handleKeyPress(event)">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <div id="sidebar">
+        <div class="sidebar-header">
+            <div class="pulse-dot"></div>
+            <h3>Hindsight Memory Core</h3>
+        </div>
+        <p style="font-size: 0.85rem; color: #6b7280; margin-top: -15px; margin-bottom: 20px;">Real-time context retrieval</p>
+
+        <div id="memory-display">
+            <div class="status-text">Standing by for interaction...</div>
+        </div>
+    </div>
+
+    <script>
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') sendMessage();
+        }
+
+        async function sendMessage() {
+            const inputField = document.getElementById('userInput');
+            const chatHistory = document.getElementById('chat-history');
+            const memoryDisplay = document.getElementById('memory-display');
+
+            const userText = inputField.value;
+            if (!userText) return;
+
+            // Display user message
+            chatHistory.innerHTML += `
+                <div class="message user-msg">
+                    <div class="msg-label">Sarah</div>
+                    ${userText}
+                </div>`;
+            inputField.value = '';
+
+            // Scroll to bottom
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+
+            // Visual loading state for the judges
+            memoryDisplay.innerHTML = `<div class="status-text" style="color: #8b5cf6;">Querying Hindsight Database...</div>`;
+            chatHistory.innerHTML += `
+                <div class="message agent-msg" id="loading-msg">
+                    <div class="msg-label">AI Agent</div>
+                    <em>Analyzing context...</em>
+                </div>`;
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+
+            try {
+                // Keep the exact same API logic and URL
+                const response = await fetch('http://127.0.0.1:8000/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: "sarah_eng_01", message: userText })
+                });
+
+                const data = await response.json();
+
+                // Remove loading message
+                document.getElementById('loading-msg').remove();
+
+                // Display Agent Reply
+                chatHistory.innerHTML += `
+                    <div class="message agent-msg">
+                        <div class="msg-label">AI Agent (Context-Aware)</div>
+                        ${data.reply}
+                    </div>`;
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+
+                // Visually display the fetched Hindsight memory in the sidebar
+                memoryDisplay.innerHTML = '';
+                if (data.memory_used.length > 0) {
+                    data.memory_used.forEach(memory => {
+                        memoryDisplay.innerHTML += `<div class="memory-item">${memory}</div>`;
+                    });
+                } else {
+                    memoryDisplay.innerHTML = `<div class="status-text">No relevant past context found.</div>`;
+                }
+
+            } catch (error) {
+                document.getElementById('loading-msg').remove();
+                chatHistory.innerHTML += `
+                    <div class="message agent-msg" style="border: 1px solid #fca5a5; background: #fef2f2; color: #991b1b;">
+                        <div class="msg-label" style="color: #991b1b;">System Error</div>
+                        Could not connect to backend server. Is uvicorn running on 127.0.0.1:8000?
+                    </div>`;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -224,3 +224,5 @@ __marimo__/
 
 users.json
 *.pyc
+
+.DS_Store

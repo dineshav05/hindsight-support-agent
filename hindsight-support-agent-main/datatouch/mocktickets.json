@@ -1,0 +1,64 @@
+[
+  {
+    "ticket_id": "TKT-1001",
+    "customer_id": "sarah_eng_01",
+    "customer_name": "Sarah",
+    "role": "Lead Engineer",
+    "date": "2026-10-08",
+    "environment": "Node.js backend hosted on AWS",
+    "issue": "Sarah's API requests began failing with HTTP 401 Unauthorized errors. Her API keys had been revoked during a security rotation, so her Node.js service could no longer authenticate with the platform.",
+    "resolution": "Sarah generated a new set of API keys, updated the API key environment variables in her AWS deployment, and restarted her Node.js service. Authentication was restored and her API requests returned successful responses.",
+    "actions_completed": [
+      "Reviewed the API authentication credentials",
+      "Confirmed the existing API keys were revoked during a security rotation",
+      "Generated new API keys",
+      "Updated the API key environment variables in AWS",
+      "Restarted the Node.js service",
+      "Verified that API requests succeeded"
+    ],
+    "pending_actions": [],
+    "status": "resolved"
+  },
+  {
+    "ticket_id": "TKT-1042",
+    "customer_id": "sarah_eng_01",
+    "customer_name": "Sarah",
+    "role": "Lead Engineer",
+    "date": "2026-10-22",
+    "environment": "Node.js backend hosted on AWS",
+    "issue": "Sarah's Node.js backend experienced intermittent connection timeouts when calling the platform API. The cause was restrictive AWS security group and firewall rules that were blocking some outbound traffic to the platform.",
+    "resolution": "Sarah added the required platform IP ranges to her allowlist and removed the conflicting deny rules. Connectivity became stable and the intermittent timeouts stopped.",
+    "actions_completed": [
+      "Reviewed the AWS security group and firewall configuration",
+      "Identified restrictive rules blocking outbound traffic to the platform",
+      "Added the required platform IP ranges to the allowlist",
+      "Removed the conflicting deny rules",
+      "Verified that connections to the platform were stable"
+    ],
+    "pending_actions": [],
+    "status": "resolved"
+  },
+  {
+    "ticket_id": "TKT-1087",
+    "customer_id": "sarah_eng_01",
+    "customer_name": "Sarah",
+    "role": "Lead Engineer",
+    "date": "2026-11-05",
+    "environment": "Node.js backend hosted on AWS",
+    "issue": "Sarah reported that her webhook endpoint is still timing out. She had already reset her API keys and cleared her firewall rules, and authentication and outbound API calls are now working correctly.",
+    "resolution": "Not yet resolved. Support confirmed that the earlier API key and firewall fixes are not the cause, and recommended investigating the webhook handler, inbound network rules, load balancer settings, and server logs.",
+    "actions_completed": [
+      "Reset API keys",
+      "Cleared firewall rules",
+      "Verified that authentication is working",
+      "Verified that outbound API calls are working"
+    ],
+    "pending_actions": [
+      "Check the webhook handler response time",
+      "Review the inbound security group rules",
+      "Review the load balancer timeout settings",
+      "Inspect the Node.js server logs for slow or blocked webhook requests"
+    ],
+    "status": "open"
+  }
+]
