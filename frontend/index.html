@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Support Agent · Hindsight Memory Core</title>
+<style>
+:root{color-scheme:dark;--bg:#090713;--line:#493064;--text:#f6f0ff;--muted:#b5a8ce;--purple:#7838f2;--panel:#191229;--card:#281c40}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden}body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text)}button,input,select{font:inherit}button{cursor:pointer}
+.app{height:100dvh;padding:16px;display:grid;grid-template-columns:minmax(0,1fr) minmax(350px,29vw);gap:16px}
+.panel{min-width:0;min-height:0;height:100%;border:1px solid var(--line);border-radius:26px;overflow:hidden;background:linear-gradient(140deg,#211632,#171025 70%,#251a3b);box-shadow:0 18px 55px #52259b22}
+.chat{display:flex;flex-direction:column}.chat-head{height:82px;flex:0 0 82px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 22px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}.brand-icon{width:45px;height:45px;display:grid;place-items:center;border-radius:15px;background:linear-gradient(135deg,#7336ed,#d05bfa);font-size:25px}.brand-title{font-size:18px;font-weight:780}.status{font-size:12px;color:var(--muted);margin-top:4px}.dot{display:inline-block;width:8px;height:8px;background:#21d47a;border-radius:50%;margin-right:7px}
+.actions{display:flex;align-items:center;gap:8px}.user-select,.head-btn{border:1px solid var(--line);border-radius:13px;padding:10px 12px;background:#382458;color:#fff;font-size:12px;font-weight:700;max-width:205px}.user-select option{background:#241936;color:white}.head-btn{background:#21172f;color:var(--text)}.theme-btn{width:40px;height:40px;padding:0;font-size:18px}
+.chat-history{flex:1;min-height:0;overflow-y:auto;padding:25px 28px;display:flex;flex-direction:column;gap:19px}.msg{max-width:82%;padding:14px 17px;border:1px solid #44315f;border-radius:18px 18px 18px 6px;background:#281c40;line-height:1.55;font-size:14px;overflow-wrap:anywhere;white-space:pre-wrap}.msg.user{align-self:flex-end;background:linear-gradient(135deg,#7134eb,#8739ef);border-color:#8c50fa;border-radius:18px 18px 6px 18px}.msg-label{font-size:11px;font-weight:800;color:#cbb6ef;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}.msg.user .msg-label{color:#f0ddff}
+.composer-area{flex:0 0 auto;padding:12px 22px 18px}.composer{height:64px;display:flex;align-items:center;gap:10px;padding:7px 8px 7px 17px;border:1px solid #8c52ff;border-radius:21px;background:#251a3b;box-shadow:0 0 0 4px #7135ed20}.composer input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:#fff;font-size:14px}.composer input::placeholder{color:#b2a5cb}.send{width:46px;height:46px;border:0;border-radius:14px;background:var(--purple);color:white;font-size:23px}.hint{font-size:11px;color:var(--muted);padding:8px 7px 0}
+.memory{display:flex;flex-direction:column}.memory-head{flex:0 0 auto;padding:15px;background:linear-gradient(#24183a,#20152f);border-bottom:1px solid var(--line)}.memory-brand{display:grid;grid-template-columns:43px minmax(0,1fr) auto;align-items:center;gap:10px;padding:7px 10px;min-height:59px;border:1px solid #5c3b87;border-radius:30px;background:#382458}.orb{width:41px;height:41px;border-radius:50%;background:radial-gradient(circle at 35% 28%,#fff,#dfcaff 20%,#965cf7 58%,#5720a9);box-shadow:0 0 20px #a66aff65}.memory-title{font-size:16px;line-height:1.17;font-weight:780;color:white}.memory-title span{display:block}.count{padding:7px 10px;border-radius:20px;background:#7135ed;color:white;font-size:11px;font-weight:780;white-space:nowrap}.memory-desc{font-size:11px;line-height:1.4;color:var(--muted);margin:9px 2px 0}.memory-list{flex:1;min-height:0;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:9px}.memory-card{flex:0 0 auto;display:grid;grid-template-columns:34px minmax(0,1fr);gap:10px;padding:12px;border:1px solid #47315f;border-radius:17px;background:#281c40;position:relative}.memory-card:before{content:"";position:absolute;left:0;top:12px;bottom:12px;width:3px;border-radius:4px;background:linear-gradient(#a34aff,#d05bfa)}.memory-icon{width:34px;height:34px;display:grid;place-items:center;border-radius:11px;background:linear-gradient(135deg,#7738ed,#d05bfa)}.memory-meta{display:flex;justify-content:space-between;gap:8px;align-items:baseline;margin-bottom:6px}.memory-type{font-size:11px;color:#c9a9ff;font-weight:780}.memory-date{display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;text-align:right;font-size:10px;color:var(--muted);white-space:nowrap}.memory-relative{color:#d7c0ff;font-weight:750}.memory-absolute{font-size:9px;opacity:.78}body.light .memory-relative{color:#7040ad}.memory-text{font-size:12px;line-height:1.5;overflow-wrap:anywhere}.delete-memory{margin-top:8px;padding:6px 10px;border:1px solid #9c2948;border-radius:9px;background:transparent;color:#ffb7c2;font-size:11px;font-weight:700}.muted{color:var(--muted);font-size:12px;padding:16px}
+.backdrop{display:none;position:fixed;inset:0;z-index:30;align-items:center;justify-content:center;padding:16px;background:#080511bb}.backdrop.open{display:flex}.dialog{width:min(550px,100%);max-height:85dvh;overflow:auto;padding:22px;border:1px solid #684a8d;border-radius:22px;background:#211632;color:#fff;box-shadow:0 25px 90px #0009}.dialog h2{margin:0 0 7px;font-size:20px}.dialog p{margin:0 0 16px;color:#c1b4d6;font-size:12px;line-height:1.5}.account-list{display:flex;flex-direction:column;gap:8px}.account-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;gap:7px;padding:8px;border:1px solid #493064;border-radius:12px;background:#2a1d40}.account-row input{width:100%;min-width:0;padding:9px;border:1px solid #654b80;border-radius:9px;background:#180f26;color:#fff}.account-row button,.dialog-actions button,.add-btn{padding:9px 11px;border:1px solid #684a8d;border-radius:10px;background:#392458;color:white;font-weight:700;font-size:12px}.account-row .remove{background:transparent;border-color:#a13c58;color:#ffbac6}.add-btn{width:100%;margin-top:11px;border-style:dashed;background:transparent}.error{min-height:17px;margin-top:8px;color:#ff9eae;font-size:12px}.dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}.dialog-actions .save{background:#7838f2;border-color:#7838f2}
+body.light{color-scheme:light;--bg:#f2eff9;--text:#261b38;--muted:#766989;--line:#d8c9eb}body.light .panel{background:linear-gradient(140deg,#fff,#f4efff)}body.light .chat-head,body.light .memory-head{background:#f7f2ff}body.light .user-select,body.light .memory-brand{background:#382458;color:#fff;border-color:#68449a}body.light .memory-title{color:#fff}body.light .head-btn{background:#f2ecfc;color:#261b38}body.light .msg,body.light .memory-card{background:#f0e9fa;color:#261b38}body.light .msg.user{background:linear-gradient(135deg,#7134eb,#8739ef);color:white}body.light .memory-text{color:#302442}body.light .composer{background:#f2ecfc}body.light .composer input{color:#261b38}body.light .dialog{background:white;color:#261b38}body.light .dialog p{color:#766989}body.light .account-row{background:#f3edfc;border-color:#d8c9eb}body.light .account-row input{background:white;color:#261b38;border-color:#c9b7e2}
+@media(max-width:1000px){.app{grid-template-columns:minmax(0,1fr) minmax(320px,35vw);gap:10px;padding:10px}.chat-head{padding:0 14px}.actions{gap:5px}.user-select{max-width:150px}.head-btn{padding:9px 8px;font-size:11px}}
+@media(max-width:700px){html,body{height:auto;min-height:100%;overflow:auto}.app{height:auto;min-height:100dvh;display:flex;flex-direction:column;overflow:visible;padding:9px}.chat{height:68dvh;min-height:470px;flex:0 0 auto}.memory{height:62dvh;min-height:400px;flex:0 0 auto}.chat-head{height:74px;flex-basis:74px;padding:0 10px}.brand-title{font-size:15px}.brand-icon{width:39px;height:39px}.user-select{max-width:130px;padding:8px 6px;font-size:10px}.head-btn{font-size:10px;padding:8px 6px}.theme-btn{width:34px;height:34px}.chat-history{padding:18px 13px}.composer-area{padding:10px 12px 14px}.account-row{grid-template-columns:1fr}}
+@media(max-width:410px){.memory-brand{grid-template-columns:36px minmax(0,1fr) auto;gap:7px;padding:6px 8px}.orb{width:35px;height:35px}.memory-title{font-size:14px}.count{font-size:10px;padding:6px 8px}.actions{gap:4px}.user-select{max-width:112px}}
+
+/* Motion + ambient colour upgrade */
+:root{--motion-fast:180ms;--motion-smooth:420ms;--ambient-x:50%;--ambient-y:35%}
+html{scroll-behavior:smooth}
+body{position:relative;isolation:isolate;background:linear-gradient(135deg,#090713,#120b22 48%,#0b1021);transition:background-color 700ms ease,color 420ms ease}
+body:before,body:after{content:"";position:fixed;inset:-22%;z-index:-1;pointer-events:none;will-change:transform,filter}
+body:before{background:radial-gradient(ellipse at 18% 22%,#7838f255 0,transparent 34%),radial-gradient(ellipse at 78% 26%,#d05bfa38 0,transparent 30%),radial-gradient(ellipse at 58% 82%,#257bdc30 0,transparent 34%);filter:blur(30px);animation:ambientDrift 22s ease-in-out infinite alternate,hueDrift 34s linear infinite}
+body:after{background:radial-gradient(ellipse 38% 34% at var(--ambient-x) var(--ambient-y),#a05cff20,transparent 72%);transition:background 500ms ease}
+@keyframes ambientDrift{0%{transform:translate3d(-2%,0,0) scale(1)}50%{transform:translate3d(2%,2%,0) scale(1.08)}100%{transform:translate3d(-1%,3%,0) scale(1.02)}}
+@keyframes hueDrift{from{filter:blur(30px) hue-rotate(0deg)}to{filter:blur(30px) hue-rotate(55deg)}}
+.panel{position:relative;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);transition:transform var(--motion-smooth) cubic-bezier(.2,.8,.2,1),border-color var(--motion-smooth),box-shadow var(--motion-smooth),background var(--motion-smooth)}
+.panel:hover{border-color:#8a61b7;box-shadow:0 22px 70px #52259b38}
+.brand-icon,.orb,.memory-icon,.send,.head-btn,.user-select,.composer,.msg,.memory-card,.dialog,.account-row,.account-row button,.add-btn{transition:transform var(--motion-fast) ease,box-shadow var(--motion-fast) ease,border-color var(--motion-fast) ease,background-color var(--motion-smooth) ease,color var(--motion-smooth) ease}
+.brand-icon{animation:iconFloat 5s ease-in-out infinite;box-shadow:0 8px 26px #a34aff35}
+@keyframes iconFloat{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-3px) rotate(4deg)}}
+.dot{box-shadow:0 0 0 0 #21d47a80;animation:statusPulse 2.2s infinite}
+@keyframes statusPulse{70%{box-shadow:0 0 0 8px #21d47a00}100%{box-shadow:0 0 0 0 #21d47a00}}
+.head-btn:hover,.user-select:hover{transform:translateY(-2px);border-color:#a77be3;box-shadow:0 7px 18px #0003}
+.head-btn:active,.send:active,.add-btn:active{transform:scale(.96)}
+.send{box-shadow:0 5px 18px #7838f255}
+.send:hover{transform:translateY(-2px) rotate(-4deg);box-shadow:0 8px 24px #7838f288}
+.send:disabled{opacity:.55;cursor:wait;transform:none}
+.composer:focus-within{transform:translateY(-2px);box-shadow:0 0 0 5px #7135ed2b,0 12px 30px #0002}
+.msg{animation:messageIn 360ms cubic-bezier(.2,.8,.2,1) both}
+@keyframes messageIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+.memory-card{animation:cardIn 380ms cubic-bezier(.2,.8,.2,1) both}
+.memory-card:hover{transform:translateY(-2px);border-color:#9063c5;box-shadow:0 9px 22px #0002}
+@keyframes cardIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.orb{animation:orbGlow 4s ease-in-out infinite alternate}
+@keyframes orbGlow{from{box-shadow:0 0 14px #a66aff45}to{box-shadow:0 0 27px #c08aff9c}}
+.backdrop{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.backdrop.open{animation:fadeIn 180ms ease both}
+.dialog{animation:dialogIn 260ms cubic-bezier(.2,.8,.2,1) both}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes dialogIn{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+body.light{background:linear-gradient(135deg,#f4efff,#eef5ff 52%,#fff0f8)}
+body.light:before{background:radial-gradient(ellipse at 18% 22%,#b78aff55 0,transparent 34%),radial-gradient(ellipse at 78% 26%,#ff9bd538 0,transparent 30%),radial-gradient(ellipse at 58% 82%,#77c9f030 0,transparent 34%)}
+body.light:after{background:radial-gradient(ellipse 38% 34% at var(--ambient-x) var(--ambient-y),#9a6cff19,transparent 72%)}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+</style>
+</head>
+<body>
+<div class="app">
+ <main class="panel chat">
+  <header class="chat-head">
+   <div class="brand"><div class="brand-icon">✧</div><div><div class="brand-title">Support Agent</div><div class="status"><span class="dot"></span>Memory connected</div></div></div>
+   <div class="actions">
+    <select id="userSelect" class="user-select" aria-label="Switch user account"></select>
+    <button class="head-btn" id="newSession" type="button">New session</button>
+    <button class="head-btn" id="manageUsers" type="button">Manage users</button>
+    <button class="head-btn theme-btn" id="themeToggle" type="button" aria-label="Toggle theme">☼</button>
+   </div>
+  </header>
+  <section class="chat-history" id="chatHistory" aria-live="polite"></section>
+  <footer class="composer-area"><form class="composer" id="chatForm"><input id="messageInput" placeholder="Describe your issue" autocomplete="off" aria-label="Describe your issue"><button class="send" id="sendButton" type="submit">↑</button></form><div class="hint" id="chatHint">Enter to send · New session keeps long-term memory</div></footer>
+ </main>
+ <aside class="panel memory">
+  <header class="memory-head"><div class="memory-brand"><div class="orb"></div><div class="memory-title"><span>Hindsight Memory</span><span>Core</span></div><div class="count" id="memoryCount">0 memories</div></div><div class="memory-desc">Stored memories for the selected account · newest first</div></header>
+  <section class="memory-list" id="memoryList"><div class="muted">Select an account to load its memories.</div></section>
+ </aside>
+</div>
+<div class="backdrop" id="accountBackdrop">
+ <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialogTitle">
+  <h2 id="dialogTitle">Manage user accounts</h2>
+  <p>Add, rename or deactivate accounts. Account IDs map to Hindsight banks; changing an ID does not migrate existing memories.</p>
+  <div class="account-list" id="accountList"></div>
+  <button class="add-btn" id="addUser" type="button">＋ Add user</button>
+  <div class="error" id="accountError" aria-live="polite"></div>
+  <div class="dialog-actions"><button id="cancelUsers" type="button">Cancel</button><button class="save" id="saveUsers" type="button">Save changes</button></div>
+ </section>
+</div>
+<script>
+const API_BASE = (localStorage.getItem("supportApiBase") || "http://127.0.0.1:8000").replace(/\/$/,"");
+const $ = id => document.getElementById(id);
+let users=[], activeUserId=null, currentSessionId=null, draftUsers=[], sending=false;
+
+function showError(message){ addMessage("System",message,"error"); }
+function addMessage(label,text,kind="agent"){
+ const el=document.createElement("div");el.className="msg"+(kind==="user"?" user":"");
+ const title=document.createElement("div");title.className="msg-label";title.textContent=label;
+ const body=document.createElement("div");body.textContent=text;
+ el.append(title,body);$("chatHistory").append(el);$("chatHistory").scrollTop=$("chatHistory").scrollHeight;return el;
+}
+function setMemoryStatus(text){$("memoryList").innerHTML="";const el=document.createElement("div");el.className="muted";el.textContent=text;$("memoryList").append(el)}
+function memoryTimestamp(item){
+ const raw=item.created_at||item.createdAt||item.timestamp||item.created||item.updated_at||item.updatedAt||item.occurred_at;
+ if(raw===undefined||raw===null||raw==="")return null;
+ let date;
+ if(typeof raw==="number"||(typeof raw==="string"&&/^\d+(\.\d+)?$/.test(raw.trim()))){
+  let n=Number(raw);if(!Number.isFinite(n))return null;if(n<1e12)n*=1000;date=new Date(n);
+ }else{date=new Date(raw)}
+ return Number.isNaN(date.getTime())?null:date;
+}
+function relativeTime(date){
+ const seconds=Math.round((date.getTime()-Date.now())/1000),abs=Math.abs(seconds);
+ const units=[['year',31536000],['month',2592000],['week',604800],['day',86400],['hour',3600],['minute',60]];
+ for(const [unit,size] of units){if(abs>=size)return new Intl.RelativeTimeFormat(undefined,{numeric:'auto'}).format(Math.round(seconds/size),unit)}
+ return new Intl.RelativeTimeFormat(undefined,{numeric:'auto'}).format(seconds,'second');
+}
+function renderMemories(items){
+ $("memoryList").innerHTML="";
+ $("memoryCount").textContent=`${items.length} memories`;
+ if(!items.length){setMemoryStatus("No stored memories for this account yet.");return}
+ items.forEach(item=>{
+  const card=document.createElement("article");card.className="memory-card";
+  const icon=document.createElement("div");icon.className="memory-icon";icon.textContent="✧";
+  const body=document.createElement("div");
+  const meta=document.createElement("div");meta.className="memory-meta";
+  const type=document.createElement("span");type.className="memory-type";type.textContent=item.type||item.category||"Memory";
+  const date=document.createElement("time");date.className="memory-date";
+  const savedAt=memoryTimestamp(item);
+  if(savedAt){
+   date.dateTime=savedAt.toISOString();date.title=`Saved on ${savedAt.toLocaleString()}`;
+   const relative=document.createElement("span");relative.className="memory-relative";relative.textContent=relativeTime(savedAt);
+   const absolute=document.createElement("span");absolute.className="memory-absolute";absolute.textContent=savedAt.toLocaleString([], {month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});
+   date.append(relative,absolute);
+  }else{date.textContent="Time unavailable";date.title="This memory did not include a usable creation timestamp."}
+  meta.append(type,date);
+  const content=document.createElement("div");content.className="memory-text";content.textContent=item.text||item.content||item.memory||JSON.stringify(item);
+  body.append(meta,content);
+  const id=item.id||item.memory_id;
+  if(id){const del=document.createElement("button");del.className="delete-memory";del.type="button";del.textContent="Delete";del.addEventListener("click",()=>deleteMemory(id,card));body.append(del)}
+  card.append(icon,body);$("memoryList").append(card);
+ });
+}
+async function api(path,options={}){
+ const response=await fetch(API_BASE+path,{...options,headers:{"Content-Type":"application/json",...(options.headers||{})}});
+ const data=await response.json().catch(()=>({detail:"The backend returned an unreadable response."}));
+ if(!response.ok)throw new Error(data.detail||`Request failed (${response.status})`);
+ return data;
+}
+async function loadUsers(preferredId){
+ const data=await api("/users");users=data.users||[];
+ $("userSelect").innerHTML="";
+ users.forEach(u=>{const o=document.createElement("option");o.value=u.id;o.textContent=`${u.name} · ${u.handle}`;$("userSelect").append(o)});
+ if(!users.length){activeUserId=null;setMemoryStatus("No accounts registered. Use Manage users to add one.");return}
+ activeUserId=users.some(u=>u.id===preferredId)?preferredId:(users.some(u=>u.id===activeUserId)?activeUserId:users[0].id);
+ $("userSelect").value=activeUserId;
+ await loadMemories();
+ if(!$("chatHistory").children.length){const u=users.find(x=>x.id===activeUserId);addMessage("AI Agent",`Hello ${u?.name||"there"}, how can I help you today?`)}
+}
+async function loadMemories(){
+ if(!activeUserId)return;
+ setMemoryStatus("Loading this account's Hindsight memories…");
+ try{const data=await api(`/memories?user_id=${encodeURIComponent(activeUserId)}`);renderMemories(data.items||[])}
+ catch(e){setMemoryStatus(`Could not load memories: ${e.message}`)}
+}
+async function deleteMemory(memoryId,card){
+ if(!activeUserId)return;
+ if(!confirm("Invalidate this memory so it is excluded from future recall?"))return;
+ try{await api(`/memories/${encodeURIComponent(memoryId)}?user_id=${encodeURIComponent(activeUserId)}`,{method:"DELETE"});card.remove();const n=$("memoryList").querySelectorAll(".memory-card").length;$("memoryCount").textContent=`${n} memories`;if(!n)setMemoryStatus("No stored memories for this account yet.")}
+ catch(e){alert(`Could not delete memory: ${e.message}`)}
+}
+$("userSelect").addEventListener("change",async()=>{
+ activeUserId=$("userSelect").value;currentSessionId=null;$("chatHistory").innerHTML="";
+ const user=users.find(u=>u.id===activeUserId);addMessage("AI Agent",`Switched to ${user?.name||"selected user"}. Starting a new conversation; long-term memories are preserved.`);
+ await loadMemories();
+});
+$("newSession").addEventListener("click",async()=>{
+ if(!activeUserId)return;
+ try{const data=await api(`/sessions?user_id=${encodeURIComponent(activeUserId)}`,{method:"POST"});currentSessionId=data.session_id;$("chatHistory").innerHTML="";const user=users.find(u=>u.id===activeUserId);addMessage("AI Agent",`New session started. Hello ${user?.name||"there"}, how can I help you today?`);$("messageInput").focus()}
+ catch(e){showError(`Could not start a new session: ${e.message}`)}
+});
+$("chatForm").addEventListener("submit",async event=>{
+ event.preventDefault();if(sending)return;
+ const input=$("messageInput"),message=input.value.trim();if(!message||!activeUserId)return;
+ sending=true;$("sendButton").disabled=true;input.value="";
+ const user=users.find(u=>u.id===activeUserId);addMessage(user?.name||"User",message,"user");
+ const loading=addMessage("AI Agent","Recalling relevant memories and preparing a response…");
+ try{
+  const data=await api("/chat",{method:"POST",body:JSON.stringify({user_id:activeUserId,message,session_id:currentSessionId})});
+  loading.remove();addMessage("AI Agent · Context-aware",data.reply||"The assistant returned an empty response.");
+  renderMemories(data.memories||[]);
+ }catch(e){loading.remove();showError(e.message)}
+ finally{sending=false;$("sendButton").disabled=false;input.focus()}
+});
+const savedTheme=localStorage.getItem("supportTheme");
+if(savedTheme==="light")document.body.classList.add("light");
+$("themeToggle").textContent=document.body.classList.contains("light")?"☾":"☼";
+$("themeToggle").addEventListener("click",()=>{
+ document.body.classList.toggle("light");
+ const light=document.body.classList.contains("light");
+ localStorage.setItem("supportTheme",light?"light":"dark");
+ $("themeToggle").textContent=light?"☾":"☼";
+});
+// Let the ambient glow gently follow pointer movement without affecting layout.
+window.addEventListener("pointermove",event=>{
+ document.documentElement.style.setProperty("--ambient-x",`${Math.round(event.clientX/window.innerWidth*100)}%`);
+ document.documentElement.style.setProperty("--ambient-y",`${Math.round(event.clientY/window.innerHeight*100)}%`);
+},{passive:true});
+
+function renderAccountEditor(){
+ $("accountList").innerHTML="";
+ draftUsers.forEach((u,i)=>{
+  const row=document.createElement("div");row.className="account-row";
+  const name=document.createElement("input");name.value=u.name;name.placeholder="Display name";name.setAttribute("aria-label","Display name");
+  const handle=document.createElement("input");handle.value=u.handle;handle.placeholder="Account ID";handle.setAttribute("aria-label","Account ID");
+  name.addEventListener("input",()=>draftUsers[i].name=name.value);
+  handle.addEventListener("input",()=>draftUsers[i].handle=handle.value);
+  const remove=document.createElement("button");remove.type="button";remove.className="remove";remove.textContent="Remove";
+  remove.addEventListener("click",()=>{draftUsers.splice(i,1);renderAccountEditor()});
+  row.append(name,handle,remove);$("accountList").append(row);
+ });
+ $("accountError").textContent="";
+}
+$("manageUsers").addEventListener("click",()=>{draftUsers=users.map(u=>({...u}));renderAccountEditor();$("accountBackdrop").classList.add("open")});
+$("cancelUsers").addEventListener("click",()=>$("accountBackdrop").classList.remove("open"));
+$("accountBackdrop").addEventListener("click",e=>{if(e.target===$("accountBackdrop"))$("accountBackdrop").classList.remove("open")});
+$("addUser").addEventListener("click",()=>{const n=draftUsers.length+1;draftUsers.push({id:null,name:`User ${n}`,handle:`user_${n}`,_new:true});renderAccountEditor()});
+$("saveUsers").addEventListener("click",async()=>{
+ const error=$("accountError");
+ if(draftUsers.some(u=>!u.name.trim()||!u.handle.trim())){error.textContent="Every account needs a display name and account ID.";return}
+ const handles=draftUsers.map(u=>u.handle.trim().toLowerCase());
+ if(new Set(handles).size!==handles.length){error.textContent="Account IDs must be unique.";return}
+ try{
+  const oldById=new Map(users.map(u=>[u.id,u]));
+  const draftExisting=new Set(draftUsers.filter(u=>!u._new).map(u=>u.id));
+  for(const old of users){if(!draftExisting.has(old.id))await api(`/users/${encodeURIComponent(old.id)}`,{method:"DELETE"})}
+  for(const u of draftUsers){
+   if(u._new){await api("/users",{method:"POST",body:JSON.stringify({name:u.name,handle:u.handle})})}
+   else{
+    const old=oldById.get(u.id);
+    if(old&&(old.name!==u.name||old.handle!==u.handle)){
+     await api(`/users/${encodeURIComponent(u.id)}`,{method:"PATCH",body:JSON.stringify({name:u.name,handle:u.handle})});
+    }
+   }
+  }
+  $("accountBackdrop").classList.remove("open");
+  await loadUsers(activeUserId);
+ }catch(e){error.textContent=e.message}
+});
+(async()=>{
+ try{await loadUsers()}catch(e){setMemoryStatus(`Backend unavailable: ${e.message}. Start FastAPI and check the API address.`);addMessage("System",`Could not load accounts from ${API_BASE}. ${e.message}`,"error")}
+})();
+</script>
+</body>
+</html>
